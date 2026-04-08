@@ -5,9 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Walko Wallpaper | Jack Tech</title>
+
+    <link rel="icon" type="image/png" href="https://i.ibb.co/Jw470S85/610-Zxgk-I0n-L.png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co/Jw470S85/610-Zxgk-I0n-L.png">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Walko Walls">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0f172a; color: white; scroll-behavior: smooth; }
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
@@ -16,7 +25,6 @@
         .wallpaper-card:hover { transform: translateY(-5px); }
         .cat-btn { white-space: nowrap; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1); }
         .cat-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
-        /* Hide scrollbar for category list */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -25,19 +33,15 @@
 
     <div class="fixed inset-0 hero-gradient opacity-20 -z-10"></div>
 
-    <!-- Navigation -->
     <nav class="sticky top-0 z-50 glass border-b border-white/10 px-6 py-4">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <i class="fas fa-image text-white"></i>
-                </div>
+                <img src="https://i.ibb.co/Jw470S85/610-Zxgk-I0n-L.png" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20" alt="Logo">
                 <h1 class="text-2xl font-extrabold tracking-tight uppercase">Walko<span class="text-blue-500">Wallpaper</span></h1>
             </div>
         </div>
     </nav>
 
-    <!-- Categories Filter Bar -->
     <div class="sticky top-[73px] z-40 glass border-b border-white/5 py-3 overflow-x-auto no-scrollbar">
         <div class="container mx-auto px-4 flex space-x-3 items-center">
             <button onclick="filterCategory('all', this)" class="cat-btn active px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wider">All</button>
@@ -51,7 +55,6 @@
         </div>
     </div>
 
-    <!-- Ad Space Top -->
     <div class="container mx-auto px-4 mt-8 flex justify-center">
         <div class="w-full max-w-5xl bg-gray-800/30 rounded-2xl p-2 border border-white/5 overflow-hidden">
             <script async="async" data-cfasync="false" src="https://pl29073043.profitablecpmratenetwork.com/82f1ac5d3abbf01df99705b56fb92f77/invoke.js"></script>
@@ -59,7 +62,6 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <section class="container mx-auto px-4 py-12">
         <div class="mb-12 text-center">
             <h2 class="text-4xl md:text-5xl font-extrabold mb-4 uppercase tracking-tighter">Premium <span id="category-title" class="text-blue-400">Collections</span></h2>
@@ -67,7 +69,6 @@
         </div>
 
         <div id="wallpaper-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            <!-- Loading State -->
             <div class="animate-pulse bg-white/5 rounded-3xl h-80"></div>
             <div class="animate-pulse bg-white/5 rounded-3xl h-80"></div>
             <div class="animate-pulse bg-white/5 rounded-3xl h-80"></div>
@@ -75,10 +76,8 @@
         </div>
     </section>
 
-    <!-- Ad Space Bottom -->
     <div class="container mx-auto px-4 my-8 flex justify-center">
         <div class="w-full max-w-4xl bg-gray-800/30 rounded-2xl p-2 border border-white/5 overflow-hidden">
-             <!-- Note: Using same ad ID as top for placeholder -->
              <div id="container-82f1ac5d3abbf01df99705b56fb92f77-duplicate"></div>
         </div>
     </div>
@@ -94,7 +93,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDICTyfZYjtmkn1Jll8DAXavnIUCvWC5gM",
             authDomain: "infinite-apk-studio.firebaseapp.com",
@@ -109,40 +107,30 @@
         const grid = document.getElementById('wallpaper-grid');
         let allWallpapers = [];
 
-        // Global Ad Link (Adsterra Direct Link Yahan Dalein)
-        const adsterraDirectLink = "https://www.profitablecpmratenetwork.com/eiwbrpusi?key=dff4e2499ce8e269ce3b52ea1dfe01ea"; // Replace with your Direct Link
+        const adsterraDirectLink = "https://www.profitablecpmratenetwork.com/eiwbrpusi?key=dff4e2499ce8e269ce3b52ea1dfe01ea";
 
-        // Load Data
         onSnapshot(collection(db, "wallpapers"), (snapshot) => {
             allWallpapers = [];
             snapshot.forEach(doc => allWallpapers.push({id: doc.id, ...doc.data()}));
             renderWallpapers('all');
         });
 
-        // Filter Function (Window object for global access)
         window.filterCategory = function(category, btn) {
-            // Update UI
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active', 'bg-blue-600'));
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.add('bg-white/5'));
             btn.classList.add('active');
             btn.classList.remove('bg-white/5');
-            
             document.getElementById('category-title').innerText = category === 'all' ? 'Collections' : category;
             renderWallpapers(category);
         };
 
-        // Render Function
         function renderWallpapers(category) {
             grid.innerHTML = '';
-            const filtered = category === 'all' 
-                ? allWallpapers 
-                : allWallpapers.filter(w => w.category === category);
-
+            const filtered = category === 'all' ? allWallpapers : allWallpapers.filter(w => w.category === category);
             if (filtered.length === 0) {
                 grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-20 tracking-widest uppercase">No Wallpapers found in this category</div>';
                 return;
             }
-
             filtered.forEach((data) => {
                 const card = `
                     <div class="wallpaper-card relative group bg-gray-800/50 rounded-[2rem] overflow-hidden shadow-2xl border border-white/5">
@@ -164,16 +152,11 @@
             });
         }
 
-        // Ad logic on Click
         window.handleAction = function(url, type) {
-            // 1. Open Adsterra Direct Link in new tab
             window.open(adsterraDirectLink, '_blank');
-
-            // 2. Perform the actual action
             if(type === 'preview') {
                 window.open(url, '_blank');
             } else {
-                // Download logic: Opening in new tab for direct image access
                 const link = document.createElement('a');
                 link.href = url;
                 link.download = 'walko-wallpaper.jpg';
@@ -182,10 +165,9 @@
             }
         };
     </script>
-
-    <!-- Adsterra Social Bar Code -->
     <script src="https://pl29081860.profitablecpmratenetwork.com/7c/42/78/7c427805a60fb7f452506a0d456d11a6.js"></script>
-
 </body>
 </html>
+
+
 
