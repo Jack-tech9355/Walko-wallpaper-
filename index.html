@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -30,6 +29,12 @@
         .cat-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .modal-overlay { background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); }
+        pre { background: #1e293b; padding: 15px; border-radius: 12px; font-size: 11px; overflow-x: auto; border: 1px solid rgba(255,255,255,0.1); color: #38bdf8; }
+        
+        #mainMenu { transform-origin: top right; transition: all 0.2s ease; }
+        .menu-item { display: flex; align-items: center; padding: 12px 20px; font-size: 14px; color: #cbd5e1; transition: all 0.2s; }
+        .menu-item:hover { background: rgba(255,255,255,0.05); color: #3b82f6; }
     </style>
 </head>
 <body class="selection:bg-blue-500">
@@ -42,6 +47,26 @@
             <div class="flex items-center space-x-2">
                 <img src="https://i.ibb.co/Jw470S85/610-Zxgk-I0n-L.png" class="w-10 h-10 rounded-xl shadow-lg shadow-blue-500/20" alt="Logo">
                 <h1 class="text-2xl font-extrabold tracking-tight uppercase">Walko<span class="text-blue-500">Wallpaper</span></h1>
+            </div>
+            
+            <div class="relative">
+                <button onclick="toggleMenu()" class="w-10 h-10 rounded-full glass hover:bg-white/10 flex items-center justify-center transition-all">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div id="mainMenu" class="absolute right-0 mt-3 w-56 glass rounded-2xl border border-white/10 shadow-2xl hidden py-2 overflow-hidden">
+                    <button onclick="toggleApiModal(); toggleMenu();" class="menu-item w-full text-left">
+                        <i class="fas fa-code mr-3 w-5"></i> Developer API
+                    </button>
+                    <button onclick="togglePrivacyModal(); toggleMenu();" class="menu-item w-full text-left">
+                        <i class="fas fa-shield-alt mr-3 w-5"></i> Privacy Policy
+                    </button>
+                    <!-- Yahan aapka Group Link aayega -->
+                    <a href="https://t.me/walkowall" target="_blank" class="menu-item w-full">
+                        <i class="fab fa-telegram-plane mr-3 w-5 text-blue-400"></i> Join Community
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -74,31 +99,44 @@
             <h2 class="text-4xl md:text-5xl font-extrabold mb-4 uppercase tracking-tighter">Premium <span id="category-title" class="text-blue-400">Collections</span></h2>
             <p class="text-gray-400 max-w-2xl mx-auto italic">Quality wallpapers by Infinite Studio.</p>
         </div>
-
         <div id="wallpaper-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            <div class="animate-pulse bg-white/5 rounded-3xl h-80"></div>
-            <div class="animate-pulse bg-white/5 rounded-3xl h-80"></div>
-            <div class="animate-pulse bg-white/5 rounded-3xl h-80"></div>
-            <div class="animate-pulse bg-white/5 rounded-3xl h-80"></div>
+            <!-- Wallpapers will be injected here -->
         </div>
     </section>
 
-    <!-- Ad Space Bottom -->
-    <div class="container mx-auto px-4 my-8 flex justify-center">
-        <div class="w-full max-w-4xl bg-gray-800/30 rounded-2xl p-2 border border-white/5 overflow-hidden">
-             <div id="container-82f1ac5d3abbf01df99705b56fb92f77-duplicate"></div>
+    <!-- Modals (API and Privacy) -->
+    <div id="apiModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0" onclick="toggleApiModal()"></div>
+        <div class="relative glass max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-[2.5rem] p-8 shadow-2xl">
+            <div class="flex justify-between items-start mb-6">
+                <h3 class="text-2xl font-black uppercase text-blue-500">Developer API</h3>
+                <button onclick="toggleApiModal()" class="bg-white/10 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <pre><code>fetch('https://firestore.googleapis.com/v1/projects/infinite-apk-studio/databases/(default)/documents/wallpapers')
+  .then(res => res.json())
+  .then(data => console.log(data.documents));</code></pre>
+        </div>
+    </div>
+
+    <div id="privacyModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+        <div class="modal-overlay absolute inset-0" onclick="togglePrivacyModal()"></div>
+        <div class="relative glass max-w-2xl w-full max-h-[85vh] overflow-y-auto rounded-[2.5rem] p-8 shadow-2xl">
+            <div class="flex justify-between items-start mb-6 border-b border-white/10 pb-4">
+                <h3 class="text-2xl font-black uppercase text-purple-400">Privacy Policy</h3>
+                <button onclick="togglePrivacyModal()" class="bg-white/10 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="space-y-4 text-sm text-gray-400">
+                <p>Hum aapki privacy ka samman karte hain. Ye site analytics aur ads ke liye cookies ka istemal karti hai.</p>
+                <p>Copyright issues ke liye hamare Telegram Community group mein sampark karein.</p>
+            </div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer class="glass mt-20 border-t border-white/10 py-10 text-center">
-        <div class="text-gray-500 text-sm">
-            Developed by <span class="text-blue-400 font-semibold">Jack-Tech</span> from <span class="text-purple-400 font-semibold">Infinite Studio</span>
-        </div>
-        <p class="mt-4 text-xs text-gray-600 uppercase tracking-widest">&copy; 2026 Walko Wallpaper</p>
+        <p class="text-gray-500 text-sm">Developed by <span class="text-blue-400 font-semibold">Jack-Tech</span></p>
     </footer>
 
-    <!-- Firebase Implementation -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -117,18 +155,18 @@
         const grid = document.getElementById('wallpaper-grid');
         let allWallpapers = [];
 
-        // Adsterra Direct Link
-        const adsterraDirectLink = "https://www.profitablecpmratenetwork.com/eiwbrpusi?key=dff4e2499ce8e269ce3b52ea1dfe01ea";
-
         onSnapshot(collection(db, "wallpapers"), (snapshot) => {
             allWallpapers = [];
             snapshot.forEach(doc => allWallpapers.push({id: doc.id, ...doc.data()}));
             renderWallpapers('all');
         });
 
+        window.toggleMenu = () => document.getElementById('mainMenu').classList.toggle('hidden');
+        window.toggleApiModal = () => document.getElementById('apiModal').classList.toggle('hidden');
+        window.togglePrivacyModal = () => document.getElementById('privacyModal').classList.toggle('hidden');
+
         window.filterCategory = function(category, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active', 'bg-blue-600'));
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.add('bg-white/5'));
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.replace('active', 'bg-white/5'));
             btn.classList.add('active');
             btn.classList.remove('bg-white/5');
             document.getElementById('category-title').innerText = category === 'all' ? 'Collections' : category;
@@ -138,45 +176,20 @@
         function renderWallpapers(category) {
             grid.innerHTML = '';
             const filtered = category === 'all' ? allWallpapers : allWallpapers.filter(w => w.category === category);
-            if (filtered.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-20 uppercase tracking-widest">No Wallpapers Found</div>';
-                return;
-            }
-            filtered.forEach((data) => {
-                const card = `
-                    <div class="wallpaper-card relative group bg-gray-800/50 rounded-[2rem] overflow-hidden shadow-2xl border border-white/5">
+            filtered.forEach(data => {
+                grid.innerHTML += `
+                    <div class="wallpaper-card relative group bg-gray-800/50 rounded-[2rem] overflow-hidden border border-white/5 shadow-xl">
                         <img src="${data.url}" class="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 p-6 flex flex-col justify-end">
-                            <h4 class="text-lg font-bold mb-4 uppercase tracking-tighter">${data.title || 'Premium Wall'}</h4>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h4 class="text-lg font-bold mb-4 uppercase">${data.title || 'Premium Wall'}</h4>
                             <div class="flex gap-2">
-                                <button onclick="handleAction('${data.url}', 'preview')" class="flex-1 bg-white text-black py-3 rounded-2xl font-bold text-center text-xs hover:bg-blue-500 hover:text-white transition-colors uppercase">Preview</button>
-                                <button onclick="handleAction('${data.url}', 'download')" class="w-14 bg-blue-600 text-white flex items-center justify-center rounded-2xl hover:bg-blue-700 transition-colors"><i class="fas fa-arrow-down"></i></button>
+                                <button onclick="window.open('${data.url}', '_blank')" class="flex-1 bg-white text-black py-3 rounded-2xl font-bold text-xs uppercase">Preview</button>
+                                <a href="${data.url}" download class="w-14 bg-blue-600 text-white flex items-center justify-center rounded-2xl"><i class="fas fa-arrow-down"></i></a>
                             </div>
                         </div>
                     </div>`;
-                grid.innerHTML += card;
             });
         }
-
-        window.handleAction = function(url, type) {
-            window.open(adsterraDirectLink, '_blank');
-            if(type === 'preview') window.open(url, '_blank');
-            else { const link = document.createElement('a'); link.href = url; link.download = 'walko.jpg'; link.target = '_blank'; link.click(); }
-        };
     </script>
-
-    <!-- Adsterra Social Bar -->
-    <script src="https://pl29081860.profitablecpmratenetwork.com/7c/42/78/7c427805a60fb7f452506a0d456d11a6.js"></script>
-
-    <!-- Statcounter Code Start -->
-    <script type="text/javascript">
-    var sc_project=13215201; 
-    var sc_invisible=1; 
-    var sc_security="22a4d314"; 
-    </script>
-    <script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
-    <noscript><div class="statcounter"><a title="website statistics" href="https://statcounter.com/" target="_blank"><img class="statcounter" src="https://c.statcounter.com/13215201/0/22a4d314/1/" alt="website statistics" referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
-    <!-- Statcounter Code End -->
-
 </body>
-    </html>
+</html>
