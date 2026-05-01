@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -85,7 +84,7 @@
         </div>
     </div>
 
-    <!-- Ad Space Top (Poster Ad) -->
+    <!-- Ad Space Top -->
     <div class="container mx-auto px-4 mt-8 flex justify-center">
         <div class="w-full max-w-5xl bg-gray-800/30 rounded-2xl p-2 border border-white/5 overflow-hidden">
             <script async="async" data-cfasync="false" src="https://pl29073043.profitablecpmratenetwork.com/82f1ac5d3abbf01df99705b56fb92f77/invoke.js"></script>
@@ -100,7 +99,11 @@
             <p class="text-gray-400 max-w-2xl mx-auto italic">Quality wallpapers by Infinite Studio.</p>
         </div>
         <div id="wallpaper-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            <!-- Wallpapers injected here -->
+            <!-- Wallpapers are loaded here via Firebase Realtime DB -->
+            <div id="loading-state" class="col-span-full text-center py-20">
+                <i class="fas fa-circle-notch fa-spin text-4xl text-blue-500"></i>
+                <p class="mt-4 text-gray-400">Fetching Wallpapers...</p>
+            </div>
         </div>
     </section>
 
@@ -112,9 +115,8 @@
                 <h3 class="text-2xl font-black uppercase text-blue-500">Developer API</h3>
                 <button onclick="toggleApiModal()" class="bg-white/10 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-times"></i></button>
             </div>
-            <pre><code>fetch('https://firestore.googleapis.com/v1/projects/infinite-apk-studio/databases/(default)/documents/wallpapers')
-  .then(res => res.json())
-  .then(data => console.log(data.documents));</code></pre>
+            <p class="text-xs text-gray-400 mb-2">Realtime Database Endpoint:</p>
+            <pre><code>https://wallpaper-a0a74-default-rtdb.firebaseio.com/wallpapers.json</code></pre>
         </div>
     </div>
 
@@ -138,35 +140,55 @@
     </footer>
 
     <script type="module">
+        // Fixed: Firestore ki jagah Realtime Database SDK use kiya gaya hai
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDICTyfZYjtmkn1Jll8DAXavnIUCvWC5gM",
-            authDomain: "infinite-apk-studio.firebaseapp.com",
-            projectId: "infinite-apk-studio",
-            storageBucket: "infinite-apk-studio.firebasestorage.app",
+            authDomain: "wallpaper-a0a74.firebaseapp.com",
+            databaseURL: "https://wallpaper-a0a74-default-rtdb.firebaseio.com/", // Updated with your DB link
+            projectId: "wallpaper-a0a74",
+            storageBucket: "wallpaper-a0a74.appspot.com",
             messagingSenderId: "1061676347878",
             appId: "1:1061676347878:web:1a09cb4c9807b842d16627"
         };
 
+        // Initialization
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const db = getDatabase(app);
         const grid = document.getElementById('wallpaper-grid');
         let allWallpapers = [];
 
-        onSnapshot(collection(db, "wallpapers"), (snapshot) => {
+        // Realtime Database listener
+        const wallpaperRef = ref(db, 'wallpapers');
+        onValue(wallpaperRef, (snapshot) => {
+            const data = snapshot.val();
             allWallpapers = [];
-            snapshot.forEach(doc => allWallpapers.push({id: doc.id, ...doc.data()}));
+            
+            if (data) {
+                // Converting Object to Array
+                Object.keys(data).forEach(key => {
+                    allWallpapers.push({ id: key, ...data[key] });
+                });
+            }
+            
             renderWallpapers('all');
+        }, (error) => {
+            console.error("Database Error:", error);
+            grid.innerHTML = `<p class="col-span-full text-center text-red-500">Error connecting to Database. Check your Rules.</p>`;
         });
 
+        // Window functions for UI
         window.toggleMenu = () => document.getElementById('mainMenu').classList.toggle('hidden');
         window.toggleApiModal = () => document.getElementById('apiModal').classList.toggle('hidden');
         window.togglePrivacyModal = () => document.getElementById('privacyModal').classList.toggle('hidden');
 
         window.filterCategory = function(category, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.replace('active', 'bg-white/5'));
+            document.querySelectorAll('.cat-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('bg-white/5');
+            });
             btn.classList.add('active');
             btn.classList.remove('bg-white/5');
             document.getElementById('category-title').innerText = category === 'all' ? 'Collections' : category;
@@ -176,15 +198,21 @@
         function renderWallpapers(category) {
             grid.innerHTML = '';
             const filtered = category === 'all' ? allWallpapers : allWallpapers.filter(w => w.category === category);
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p class="text-center col-span-full text-gray-500 py-10 font-bold">No wallpapers found in this category.</p>';
+                return;
+            }
+
             filtered.forEach(data => {
                 grid.innerHTML += `
                     <div class="wallpaper-card relative group bg-gray-800/50 rounded-[2rem] overflow-hidden border border-white/5 shadow-xl">
-                        <img src="${data.url}" class="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                            <h4 class="text-lg font-bold mb-4 uppercase">${data.title || 'Premium Wall'}</h4>
+                        <img src="${data.url}" class="w-full h-[400px] object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/400x600?text=Invalid+URL'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent p-6 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h4 class="text-lg font-bold mb-4 uppercase tracking-tight">${data.title || 'Premium Wall'}</h4>
                             <div class="flex gap-2">
-                                <button onclick="window.open('${data.url}', '_blank')" class="flex-1 bg-white text-black py-3 rounded-2xl font-bold text-xs uppercase">Preview</button>
-                                <a href="${data.url}" download class="w-14 bg-blue-600 text-white flex items-center justify-center rounded-2xl"><i class="fas fa-arrow-down"></i></a>
+                                <button onclick="window.open('${data.url}', '_blank')" class="flex-1 bg-white text-black py-3 rounded-2xl font-bold text-xs uppercase hover:bg-blue-500 hover:text-white transition-colors">Preview</button>
+                                <a href="${data.url}" download class="w-14 bg-blue-600 text-white flex items-center justify-center rounded-2xl hover:bg-blue-700 transition-colors"><i class="fas fa-arrow-down"></i></a>
                             </div>
                         </div>
                     </div>`;
@@ -200,4 +228,5 @@
     </script>
     <script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
 </body>
-</html>
+        </html>
+        
